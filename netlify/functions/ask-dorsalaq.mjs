@@ -1,3 +1,4 @@
+import {timingSafeEqual} from "node:crypto";
 // Bounded AI experiment. Requires server-side OPENAI_API_KEY; no secrets in browser.
 const FACTS = [
   "Dorsal AQ is a valve-free dry snorkel technology described on dorsalaq.dev.",
@@ -12,6 +13,12 @@ export default async function handler(request) {
   const headers = {"content-type":"application/json","cache-control":"no-store","access-control-allow-origin":"https://dorsalaq.dev","x-content-type-options":"nosniff"};
   const reply = (status, body) => new Response(JSON.stringify(body), {status, headers});
   if (request.method !== "POST") return reply(405,{error:"method_not_allowed"});
+  // Fail closed: only an operator with a server-configured secret can invoke inference.
+  const accessToken = Netlify.env.get("DORSALAQ_EVAL_TOKEN");
+  if (!accessToken || accessToken.length < 32) return reply(503,{error:"evaluation_access_not_configured"});
+  const supplied = request.headers.get("x-evaluation-token") || "";
+  const a = Buffer.from(accessToken), b = Buffer.from(supplied);
+  if (a.length !== b.length || !timingSafeEqual(a,b)) return reply(401,{error:"unauthorized"});
   const size = Number(request.headers.get("content-length") || 0);
   if (size > 2048) return reply(413,{error:"request_too_large"});
   let body;
