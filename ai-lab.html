@@ -1,17 +1,1 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dorsal AQ | Bounded AI Evaluation Lab</title>
-<style>body{font:1.1rem/1.5 system-ui;max-width:46rem;margin:3rem auto;padding:0 1rem;color:#13233f}textarea{display:block;width:100%;min-height:6rem;font:inherit}button{margin-top:1rem;padding:.7rem 1.3rem;font:inherit}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f8fb;padding:1rem}a{color:#0b6b63}</style></head>
-<body><a href="/">Back to Dorsal AQ</a><main><h1>Bounded AI evaluation lab</h1>
-<p>Experimental AI answers are limited to a small set of public website facts. Responses may be incorrect. Do not use for diving safety decisions or engineering claims.</p>
-<form id="ask"><label for="question">Ask about the Dorsal AQ website</label><textarea id="question" maxlength="400" minlength="3" required></textarea><button type="submit">Ask experimental assistant</button></form>
-<h2>Response</h2><pre id="answer" role="status" aria-live="polite">No question submitted.</pre></main>
-<script>
-const form=document.getElementById("ask"), output=document.getElementById("answer");
-form.addEventListener("submit",async event=>{
- event.preventDefault();const button=form.querySelector("button");button.disabled=true;output.textContent="Requesting response…";
- try{const res=await fetch("/api/ask-dorsalaq",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({question:document.getElementById("question").value})});
- const data=await res.json();output.textContent=res.ok?data.response:"Assistant unavailable: "+(data.error||"unknown_error");
- }catch{output.textContent="Assistant unavailable: network error."}finally{button.disabled=false}
-});
-</script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dorsal AQ — Controlled AI Evaluation</title><style>body{font:1.1rem/1.6 system-ui;max-width:44rem;margin:3rem auto;padding:0 1rem;color:#13233f}a{color:#0b6b63}</style></head><body><a href="/">Back to Dorsal AQ</a><main><h1>Controlled AI evaluation</h1><p>This experimental feature is restricted to authorized evaluation operators. It is not a public question-answering service.</p><p>Evaluators run authenticated, bounded test questions through the private operator CLI. No API credentials or evaluation tokens are entered into this webpage.</p><p>AI responses require independent factual review and must not be used for diving safety decisions or engineering guarantees.</p></main></body></html>
